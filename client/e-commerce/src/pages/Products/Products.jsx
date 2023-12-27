@@ -2,29 +2,46 @@ import React, { useState } from "react";
 import "./Products.scss";
 import List from "../../components/List/List";
 import { useParams } from "react-router-dom";
+import useFetch from "../../hooks/useFetch";
 
 const Product = () => {
 	const catId = parseInt(useParams().id);
 	const [maxPrice, setMaxPrice] = useState(1000);
 	const [sort, setSort] = useState(null);
 
+	const [selectedSubCats, setSelectedSubCats] = useState([]);
+
+	const { data } = useFetch(
+		`/sub-categories?[filters][categories][id][$eq]=${catId}`
+	);
+
+	const handleChange = (e) => {
+		const value = e.target.value;
+		const isChecked = e.target.checked;
+
+		setSelectedSubCats((prevSelectedSubCats) => {
+			return isChecked
+				? [...prevSelectedSubCats, value]
+				: prevSelectedSubCats.filter((item) => item !== value);
+		});
+	};
+
 	return (
 		<div className="products">
 			<div className="left">
 				<div className="filterItem">
 					<h2>Product Categories</h2>
-					<div className="inputItem">
-						<input type="checkbox" value={1} id="1" />
-						<label htmlFor="1">Shoes</label>
-					</div>
-					<div className="inputItem">
-						<input type="checkbox" value={2} id="2" />
-						<label htmlFor="2">Skirts</label>
-					</div>
-					<div className="inputItem">
-						<input type="checkbox" value={3} id="3" />
-						<label htmlFor="3">Coats</label>
-					</div>
+					{data?.map((item) => (
+						<div className="inputItem" key={item.id}>
+							<input
+								type="checkbox"
+								value={item.id}
+								id={item.id}
+								onChange={handleChange}
+							/>
+							<label htmlFor={item.id}>{item.attributes.title}</label>
+						</div>
+					))}
 				</div>
 				<div className="filterItem">
 					<h2>Filter by price</h2>
@@ -67,7 +84,12 @@ const Product = () => {
 					src="https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600"
 					alt=""
 				/>
-				<List catId={catId} maxPrice={maxPrice} sort={sort} />
+				<List
+					catId={catId}
+					maxPrice={maxPrice}
+					sort={sort}
+					subCats={selectedSubCats}
+				/>
 			</div>
 		</div>
 	);

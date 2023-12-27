@@ -1,52 +1,26 @@
 import React from "react";
 import "./List.scss";
 import Card from "../Card/Card";
+import useFetch from "../../hooks/useFetch";
 
-const List = () => {
-	const data = [
-		{
-			id: 1,
-			img: "https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			img2: "https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			title: "Long Sleeve Graphic T-shirt",
-			isNew: true,
-			oldPrice: 20,
-			price: 12,
-		},
-		{
-			id: 2,
-			img: "https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			img2: "https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			title: "Hat",
-			isNew: true,
-			oldPrice: 20,
-			price: 12,
-		},
-		{
-			id: 3,
-			img: "https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			img2: "https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			title: "Coat",
-			isNew: false,
-			oldPrice: 20,
-			price: 12,
-		},
-		{
-			id: 4,
-			img: "https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			img2: "https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			title: "Skirt",
-			isNew: false,
-			oldPrice: 20,
-			price: 12,
-		},
-	];
+const List = ({ subCats, maxPrice, sort, catId }) => {
+	//filter for products, checkbox, maxprice and sort
+	const products = `/products?populate=*&[filters][categories][id]=${catId}`;
+	const subCategoryQuery = subCats
+		.map((item) => `&[filters][sub_categories][id][$eq]=${item}`)
+		.join("");
+	const price = `&[filters][price][$lte]=${maxPrice}`;
+	const forSort = `&sort=price:${sort}`;
+
+	const { data, loading } = useFetch(
+		`${products}${subCategoryQuery}${price}${forSort}`
+	);
 
 	return (
 		<div className="list">
-			{data?.map((item) => (
-				<Card item={item} key={item.id} />
-			))}
+			{loading
+				? "loading"
+				: data?.map((item) => <Card item={item} key={item.id} />)}
 		</div>
 	);
 };
