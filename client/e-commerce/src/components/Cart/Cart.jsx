@@ -1,34 +1,14 @@
 import React from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import "./Cart.scss";
+import { useSelector } from "react-redux";
 
 function Cart() {
-	const data = [
-		{
-			id: 1,
-			img: "https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			img2: "https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			title: "Long Sleeve Graphic T-shirt",
-			desc: "Long Sleeve Graphic T-shirt",
-			isNew: true,
-			oldPrice: 20,
-			price: 12,
-		},
-		{
-			id: 2,
-			img: "https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			img2: "https://images.pexels.com/photos/837140/pexels-photo-837140.jpeg?auto=compress&cs=tinysrgb&w=1600",
-			title: "Hat",
-			desc: "Hat",
-			isNew: true,
-			oldPrice: 20,
-			price: 12,
-		},
-	];
+	const products = useSelector((state) => state.cart.products);
 	return (
 		<div className="cart">
 			<h1>Products in your cart</h1>
-			{data?.map((item) => (
+			{products?.map((item) => (
 				<div className="item" key={item.id}>
 					<img src={item.img} alt="" />
 					<div className="details">
